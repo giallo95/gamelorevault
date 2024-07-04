@@ -1,1 +1,61 @@
 /* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Cousine:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+body, h1, h2, h3, h4, h5, h6, p, a, .btn, .card,  input, textarea, select, button {
+  font-family: "Cousine", monospace;
+}
+
+body {
+  background-color: #000;
+  color: #00FF00;
+  font-family: 'Matrix Code NFI', sans-serif;
+}
+
+h2 {
+  color: #00FF00;
+}
+
+a.btn-primary {
+  background-color: #00FF00;
+  border-color: #00FF00;
+  color: #000;
+}
+
+a.btn-primary:hover {
+  background-color: #000;
+  border-color: #00FF00;
+  color: #00FF00;
+}
+
+.card {
+  background-color: #111;
+  color: #00FF00;
+}
+
+.card-title, .card-text {
+  color: #00FF00;
+}
+
+.form-control {
+  background-color: #000;
+  border: 1px solid #00FF00;
+  color: #00FF00;
+}
+
+.form-control:focus {
+  background-color: #000;
+  border-color: #00FF00;
+  box-shadow: none;
+}
+
+.btn-primary {
+  background-color: #00FF00;
+  border-color: #00FF00;
+  color: #000;
+}
+
+.btn-primary:hover {
+  background-color: #000;
+  border-color: #00FF00;
+  color: #00FF00;
+}

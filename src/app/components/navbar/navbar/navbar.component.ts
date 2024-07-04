@@ -1,11 +1,13 @@
-import { AfterViewInit, Component, HostListener } from '@angular/core';
-
+import { AfterViewInit, Component, HostListener, Inject } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss'
 })
 export class NavbarComponent implements AfterViewInit {
+
+  constructor(@Inject(DOCUMENT) private document: Document) {}
 
   @HostListener('window:resize')
   onResize() {
