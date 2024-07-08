@@ -19,13 +19,21 @@ export class NavbarComponent implements AfterViewInit {
   }
 
   private adjustContentMargin() {
+   /* if (!document){return}
     const navbar = document.querySelector('.navbar') as HTMLElement;
+
     if (navbar) {
       const navbarHeight = navbar.clientHeight;
       const content = document.querySelector('.content') as HTMLElement;
       if (content) {
         content.style.marginTop = `${navbarHeight}px`;
       }
-    }
+    }*/
+      if (typeof this.document !== 'undefined') {
+        const navbarHeight = this.document.querySelector('.navbar')?.clientHeight || 0;
+        const content = this.document.querySelector('.content')as HTMLElement;
+        if (content) {
+          content.style.marginTop = `${navbarHeight}px`;
+        }
   }
-}
+}}
