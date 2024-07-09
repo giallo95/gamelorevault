@@ -46,7 +46,7 @@ export class GamesComponent implements OnInit {
             screenshotUrl: game.screenshots && game.screenshots.length > 0 ? `https://images.igdb.com/igdb/image/upload/t_screenshot_big/${game.screenshots[0].image_id}.jpg` : 'path/to/default-image.jpg',
             genreNames: game.genres ? game.genres.map((id: string | number) => this.genresMap[id]).join(', ') : 'No genres'
           }))
-          .sort((a, b) => a.name.localeCompare(b.name))
+          .sort((a, b) => (a.name || '').localeCompare(b.name || '')) // Gestione valori nulli per `name`
           .slice(0, this.pageSize); // Usa this.pageSize per limitare il numero di giochi per pagina
 
         this.calculatePagination(data.length);
@@ -64,7 +64,7 @@ export class GamesComponent implements OnInit {
     this.visiblePages = []; // Azzera l'array prima di riempirlo
 
     for (let i = 1; i <= this.maxPages; i++) {
-      this.visiblePages.push(i); // Aggiungi l'indice `i` all'array
+      this.visiblePages.push(i); // Aggiungi l'indice i all'array
     }
   }
 
@@ -82,7 +82,6 @@ export class GamesComponent implements OnInit {
     this.currentPage = page;
     this.updateVisibleGames();
   }
-
 
   goToNextPage(): void {
     if (this.currentPage < this.maxPages) {

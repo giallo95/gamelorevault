@@ -6,6 +6,20 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class IgdbService {
+  private apiUrl = 'http://localhost:8080/api';
+
+  constructor(private http: HttpClient) {}
+
+  fetchGenres(): Observable<any> {
+    return this.http.get<any[]>(`${this.apiUrl}/genres`);
+  }
+
+  fetchGames(): Observable<any> {
+    return this.http.get<any[]>(`${this.apiUrl}/games`);
+  }
+}
+
+  /*
   private apiUrl = 'https://api.igdb.com/v4/games';
   private genresUrl = 'https://api.igdb.com/v4/genres';
   private clientId = 'b6w1hquuf1exhlo5arw29ubvol8ils';
@@ -42,4 +56,5 @@ export class IgdbService {
 
     return this.http.post<any>(this.genresUrl, body, { headers });
   }
-}
+    */
+
