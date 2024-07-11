@@ -1,7 +1,14 @@
 <div class="container mt-5">
-  <h2>Profilo Utente</h2>
-  <div *ngIf="user">
-    <p><strong>Username:</strong> {{ user.username }}</p>
-    <p><strong>Email:</strong> {{ user.email }}</p>
+  <div *ngIf="userProfile; else loading">
+    <h2>User Profile</h2>
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">{{ userProfile.username }}</h5>
+        <p class="card-text">{{ userProfile.email }}</p>
+      </div>
+    </div>
   </div>
+  <ng-template #loading>
+    <p>Loading...</p>
+  </ng-template>
 </div>

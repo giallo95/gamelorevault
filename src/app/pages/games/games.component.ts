@@ -6,21 +6,21 @@ import { IgdbService } from '../../services/igdb.service';
   templateUrl: './games.component.html',
   styleUrl: './games.component.scss'
 })
+
 export class GamesComponent implements OnInit {
   currentPage: number = 1;
   pageSize: number = 12;
-  pageRange = 5;
   maxPages = 0;
 
   games: any[] = [];
-  genresMap: any = {};  // Per memorizzare i nomi dei generi
-  visiblePages: number[] = []; // Inizializza come array vuoto
+  genresMap: any = {};
+  visiblePages: number[] = [];
 
   constructor(private igdbService: IgdbService) {}
 
   ngOnInit(): void {
     this.fetchGenres();
-    this.fetchGames();
+    this.fetchGames(this.currentPage);
   }
 
   fetchGenres(): void {
@@ -36,71 +36,108 @@ export class GamesComponent implements OnInit {
     );
   }
 
-  fetchGames(): void {
+  fetchGames(page: number): void {
+    const offset = (page - 1) * this.pageSize;
     this.igdbService.fetchGames().subscribe(
       (data: any[]) => {
-        this.games = data
-          .map(game => ({
-            ...game,
-            coverUrl: game.cover ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${game.cover.image_id}.jpg` : null,
-            screenshotUrl: game.screenshots && game.screenshots.length > 0 ? `https://images.igdb.com/igdb/image/upload/t_screenshot_big/${game.screenshots[0].image_id}.jpg` : 'path/to/default-image.jpg',
-            genreNames: game.genres ? game.genres.map((id: string | number) => this.genresMap[id]).join(', ') : 'No genres'
-          }))
-          .sort((a, b) => (a.name || '').localeCompare(b.name || '')) // Gestione valori nulli per `name`
-          .slice(0, this.pageSize); // Usa this.pageSize per limitare il numero di giochi per pagina
+        this.games = data.map(game => {
+          let coverUrl = null;
+          try {
+            // Ottieni la URL della cover, se disponibile
+            coverUrl = game.cover ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${game.cover.image_id}.jpg` : null;
 
-        this.calculatePagination(data.length);
-        this.updateVisibleGames();
+            // Se non c'è la cover, usa lo screenshot come fallback
+            if (!coverUrl && game.screenshots && game.screenshots.length > 0) {
+              coverUrl = `https://images.igdb.com/igdb/image/upload/t_screenshot_big/${game.screenshots[0].image_id}.jpg`;
+            }
+
+            // Se non c'è né cover né screenshot, usa un'immagine di default
+            if (!coverUrl) {
+              coverUrl = 'path/to/default-image.jpg';
+            }
+          } catch (error) {
+            console.error('Error setting cover URL for game:', game.name, error);
+            coverUrl = 'path/to/default-image.jpg';
+          }
+
+          return {
+            ...game,
+            coverUrl: coverUrl,
+            genreNames: game.genres ? game.genres.map((id: string | number) => this.genresMap[id]).join(', ') : 'Genre not available'
+          };
+        });
+
+        // Ordina i giochi per nome
+        this.games.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
       },
       (error: any) => {
         console.error('Error fetching games:', error);
       }
     );
   }
-
-  // Funzione per calcolare la paginazione
-  calculatePagination(totalGames: number): void {
-    this.maxPages = Math.ceil(totalGames / this.pageSize);
-    this.visiblePages = []; // Azzera l'array prima di riempirlo
-
-    for (let i = 1; i <= this.maxPages; i++) {
-      this.visiblePages.push(i); // Aggiungi l'indice i all'array
-    }
-  }
-
-  // Funzione per aggiornare i giochi visibili sulla pagina corrente
-  updateVisibleGames(): void {
-    // Logica per determinare quali giochi visualizzare in base alla pagina corrente
-    const startIndex = (this.currentPage - 1) * this.pageSize;
-    const endIndex = startIndex + this.pageSize;
-    this.games = this.games.slice(startIndex, endIndex);
-  }
-
-  // Funzione per navigare alla pagina specificata
-  goToPage(page: number): void {
-    console.log(`Navigating to page ${page}`);
-    this.currentPage = page;
-    this.updateVisibleGames();
-  }
-
-  goToNextPage(): void {
-    if (this.currentPage < this.maxPages) {
-      this.goToPage(this.currentPage + 1);
-    }
-  }
-
-  goToLastPage(): void {
-    this.goToPage(this.maxPages);
-  }
-
-  goToFirstPage(): void {
-    this.goToPage(1);
-  }
-
-  goToPreviousPage(): void {
-    if (this.currentPage > 1) {
-      this.goToPage(this.currentPage - 1);
-    }
-  }
-
 }
+/*export class GamesComponent implements OnInit {
+  currentPage: number = 1;
+  pageSize: number = 12;
+  maxPages = 0;
+
+  games: any[] = [];
+  genresMap: any = {};
+  visiblePages: number[] = [];
+
+  constructor(private igdbService: IgdbService) {}
+
+  ngOnInit(): void {
+    this.fetchGenres();
+    this.fetchGames(this.currentPage);
+  }
+
+  fetchGenres(): void {
+    this.igdbService.fetchGenres().subscribe(
+      (genres: any[]) => {
+        genres.forEach(genre => {
+          this.genresMap[genre.id] = genre.name;
+        });
+      },
+      (error: any) => {
+        console.error('Error fetching genres:', error);
+      }
+    );
+  }
+
+  fetchGames(page: number): void {
+    const offset = (page - 1) * this.pageSize;
+    this.igdbService.fetchGames().subscribe(
+      (data: any[]) => {
+        this.games = data.map(game => {
+          // Ottieni la URL della cover, se disponibile
+          let coverUrl = game.cover ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${game.cover.image_id}.jpg` : null;
+
+          // Se non c'è la cover, usa lo screenshot come fallback
+          if (!coverUrl && game.screenshots && game.screenshots.length > 0) {
+            coverUrl = `https://images.igdb.com/igdb/image/upload/t_screenshot_big/${game.screenshots[0].image_id}.jpg`;
+          }
+
+          // Se non c'è né cover né screenshot, usa un'immagine di default
+          if (!coverUrl) {
+            coverUrl = 'path/to/default-image.jpg';
+          }
+
+          return {
+            ...game,
+            coverUrl: coverUrl,
+            genreNames: game.genres ? game.genres.map((id: string | number) => this.genresMap[id]).join() : 'Genre not available'
+          };
+        });
+
+        // Ordina i giochi per nome
+        this.games.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
+      },
+      (error: any) => {
+        console.error('Error fetching games:', error);
+      }
+    );
+  }
+}*/
+
