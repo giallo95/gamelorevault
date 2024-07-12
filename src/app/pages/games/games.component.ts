@@ -1,32 +1,35 @@
+import { GameDetailService } from './../../services/game-detail.service';
 import { Component, OnInit } from '@angular/core';
 import { IgdbService } from '../../services/igdb.service';
 
 @Component({
   selector: 'app-games',
   templateUrl: './games.component.html',
-  styleUrl: './games.component.scss'
+  styleUrl: './games.component.scss',
 })
-
 export class GamesComponent implements OnInit {
   currentPage: number = 1;
   pageSize: number = 12;
   maxPages = 0;
 
   games: any[] = [];
-  genresMap: any = {};
+  genresMap: { [key: string]: string } = {};
   visiblePages: number[] = [];
 
-  constructor(private igdbService: IgdbService) {}
+  constructor(
+    private igdbService: IgdbService,
+    private gameDetailService: GameDetailService
+  ) {}
 
   ngOnInit(): void {
     this.fetchGenres();
-    this.fetchGames(this.currentPage);
+    this.fetchGames();
   }
 
   fetchGenres(): void {
     this.igdbService.fetchGenres().subscribe(
       (genres: any[]) => {
-        genres.forEach(genre => {
+        genres.forEach((genre) => {
           this.genresMap[genre.id] = genre.name;
         });
       },
@@ -36,34 +39,42 @@ export class GamesComponent implements OnInit {
     );
   }
 
-  fetchGames(page: number): void {
-    const offset = (page - 1) * this.pageSize;
+  fetchGames(): void {
     this.igdbService.fetchGames().subscribe(
       (data: any[]) => {
-        this.games = data.map(game => {
-          let coverUrl = null;
-          try {
-            // Ottieni la URL della cover, se disponibile
-            coverUrl = game.cover ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${game.cover.image_id}.jpg` : null;
+        this.games = data.map((game) => {
+          this.gameDetailService.globalData = game;
 
-            // Se non c'è la cover, usa lo screenshot come fallback
-            if (!coverUrl && game.screenshots && game.screenshots.length > 0) {
-              coverUrl = `https://images.igdb.com/igdb/image/upload/t_screenshot_big/${game.screenshots[0].image_id}.jpg`;
-            }
+          // Ottieni i nomi dei generi, se disponibili
+          const genreNames = game.genres
+            ? game.genres.map((id: number) => this.genresMap[id]).join(' ')
+            : 'Genre not available';
 
-            // Se non c'è né cover né screenshot, usa un'immagine di default
-            if (!coverUrl) {
-              coverUrl = 'path/to/default-image.jpg';
-            }
-          } catch (error) {
-            console.error('Error setting cover URL for game:', game.name, error);
+          // Ottieni la URL della cover, se disponibile
+          let coverUrl = game.cover
+            ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${game.cover.image_id}.jpg`
+            : null;
+
+          // Se non c'è la cover, usa lo screenshot come fallback
+          if (!coverUrl && game.screenshots && game.screenshots.length > 0) {
+            coverUrl = `https://images.igdb.com/igdb/image/upload/t_screenshot_big/${game.screenshots[0].image_id}.jpg`;
+          }
+
+          // Se non c'è né cover né screenshot, usa un'immagine di default
+          if (!coverUrl) {
             coverUrl = 'path/to/default-image.jpg';
           }
+
+          // Converti la data di rilascio da timestamp Unix a data leggibile
+          const releaseDate = game.release_date
+            ? new Date(game.release_date * 1000).toLocaleDateString()
+            : 'N/A';
 
           return {
             ...game,
             coverUrl: coverUrl,
-            genreNames: game.genres ? game.genres.map((id: string | number) => this.genresMap[id]).join(', ') : 'Genre not available'
+            genreNames: genreNames,
+            releaseDate: releaseDate,
           };
         });
 
@@ -75,6 +86,10 @@ export class GamesComponent implements OnInit {
       }
     );
   }
+
+  setGame = (game: any) => {
+    this.gameDetailService.globalData = game;
+  };
 }
 /*export class GamesComponent implements OnInit {
   currentPage: number = 1;
@@ -140,4 +155,3 @@ export class GamesComponent implements OnInit {
     );
   }
 }*/
-

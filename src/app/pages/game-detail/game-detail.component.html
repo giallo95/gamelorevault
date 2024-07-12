@@ -1,27 +1,59 @@
 <div *ngIf="game" class="container mt-5">
   <div class="row">
     <div class="col-md-4">
-      <img *ngIf="game.coverUrl" [src]="game.coverUrl" alt="{{ game.name }} cover" class="img-fluid mb-3">
+      <img
+        *ngIf="game.coverUrl"
+        [src]="game.coverUrl"
+        alt="{{ game.name }} cover"
+        class="img-fluid mb-3"
+      />
     </div>
-    <div class="col-md-8">
+    <div class="col-md-8 d-flex flex-wrap">
       <h1>{{ game.name }}</h1>
-      <p><strong>Release Date:</strong>2 {{ game.first_release_date | date }}</p>
-      <p><strong>Genre:</strong> {{ game.genreNames }}</p>
-      <p><strong>Storyline:</strong></p>
-      <p>{{ game.storyline }}</p>
-      <p><strong>Summary:</strong></p>
-      <p>{{ game.summary }}</p>
+      <div class="col-12">
+        <p>
+          <strong>Release Date:</strong> {{ game.first_release_date | date }}
+        </p>
+      </div>
+      <div class="col-12">
+        <p><strong>Genre:</strong> {{ game.genreNames }}</p>
+      </div>
+      <div class="col-12">
+        <p><strong>Storyline:</strong></p>
+      </div>
+      <div class="col-12">
+        <p>{{ game.storyline }}</p>
+      </div>
+      <div class="col-12">
+        <p><strong>Summary:</strong></p>
+      </div>
+      <div class="col-12">
+        <p>{{ game.summary }}</p>
+      </div>
     </div>
   </div>
   <div class="row mt-4">
     <div class="col">
       <h3>Screenshots</h3>
-      <div *ngIf="game.screenshots && game.screenshots.length > 0" class="d-flex flex-wrap">
-        <div *ngFor="let screenshot of game.screenshots" class="p-2">
-          <img [src]="'https://images.igdb.com/igdb/image/upload/t_screenshot_big/' + screenshot.image_id + '.jpg'" alt="Screenshot" class="img-thumbnail">
+      <div
+        *ngIf="game.screenshots && game.screenshots.length > 0"
+        class="d-flex flex-wrap"
+      >
+        <div class="p-2">
+          <img
+            [src]="
+              'https://images.igdb.com/igdb/image/upload/t_screenshot_big/' +
+              game.screenshots[0].image_id +
+              '.png'
+            "
+            alt="Screenshot"
+            class="img-thumbnail"
+          />
         </div>
       </div>
-      <p *ngIf="!game.screenshots || game.screenshots.length === 0">No screenshots available.</p>
+      <p *ngIf="!game.screenshots || game.screenshots.length === 0">
+        No screenshots available.
+      </p>
     </div>
   </div>
 </div>

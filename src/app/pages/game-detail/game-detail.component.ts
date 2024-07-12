@@ -1,24 +1,29 @@
+import { GameDetailService } from './../../services/game-detail.service';
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IgdbService } from '../../services/igdb.service';
 
 @Component({
   selector: 'app-game-detail',
   templateUrl: './game-detail.component.html',
-  styleUrl: './game-detail.component.scss'
+  styleUrl: './game-detail.component.scss',
 })
 export class GameDetailComponent implements OnInit {
-  game: any;
+  [x: string]: any;
 
-  genresMap: any = {}
+  genresMap: any = {};
+  game: any;
 
   constructor(
     private route: ActivatedRoute,
-    private igdbService: IgdbService
-  ) { }
+    private igdbService: IgdbService,
+    private GameDetailService: GameDetailService
+  ) {}
 
   ngOnInit(): void {
+    this.game = this.GameDetailService.globalData;
+    console.log(this.game);
     const gameIdParam = this.route.snapshot.paramMap.get('id');
     if (gameIdParam !== null) {
       const gameId = +gameIdParam;
@@ -34,9 +39,18 @@ export class GameDetailComponent implements OnInit {
       (data: any) => {
         this.game = {
           ...data,
-          coverUrl: data.cover ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${data.cover.image_id}.jpg` : null,
-          screenshotUrl: data.screenshots && data.screenshots.length > 0 ? `https://images.igdb.com/igdb/image/upload/t_screenshot_big/${data.screenshots[0].image_id}.jpg` : null,
-          genreNames: data.genres ? data.genres.map((id: string | number) => this.genresMap[id]).join(', ') : 'No genres'
+          coverUrl: data.cover
+            ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${data.cover.image_id}.jpg`
+            : null,
+          screenshotUrl:
+            data.screenshots && data.screenshots.length > 0
+              ? `https://images.igdb.com/igdb/image/upload/t_screenshot_big/${data.screenshots[0].image_id}.jpg`
+              : null,
+          genreNames: data.genres
+            ? data.genres
+                .map((id: string | number) => this.genresMap[id])
+                .join(', ')
+            : 'No genres',
         };
       },
       (error: any) => {
@@ -47,7 +61,7 @@ export class GameDetailComponent implements OnInit {
   fetchGenres(): void {
     this.igdbService.fetchGenres().subscribe(
       (data: any) => {
-        data.forEach((genre: { id: number, name: string }) => {
+        data.forEach((genre: { id: number; name: string }) => {
           this.genresMap[genre.id] = genre.name;
         });
       },
