@@ -12,9 +12,12 @@
         <div class="card-body">
           <h5 class="card-title">{{ game.name }}</h5>
           <p class="card-text">{{ game.genreNames }}</p>
-          <button>
-            <a routerLink="../game-detail" (click)="setGame(game)">Dettagli</a>
-          </button>
+          <a
+            class="btn btn-secondary btn-lg"
+            routerLink="../game-detail"
+            (click)="setGame(game)"
+            >Dettagli</a
+          >
         </div>
       </div>
     </div>

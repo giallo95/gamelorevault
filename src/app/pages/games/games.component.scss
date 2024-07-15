@@ -1,4 +1,17 @@
-img{
+img {
   width: auto;
   height: 300px;
+}
+a {
+  background-color: #000;
+  color: #00ff00;
+  border: 1px solid #00ff00;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 0;
+}
+
+a:hover {
+  background-color: #00ff00;
+  color: #000;
 }

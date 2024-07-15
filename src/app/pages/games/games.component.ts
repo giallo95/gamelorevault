@@ -38,16 +38,17 @@ export class GamesComponent implements OnInit {
       }
     );
   }
-
   fetchGames(): void {
     this.igdbService.fetchGames().subscribe(
       (data: any[]) => {
         this.games = data.map((game) => {
           this.gameDetailService.globalData = game;
 
+          console.log(game);
+
           // Ottieni i nomi dei generi, se disponibili
           const genreNames = game.genres
-            ? game.genres.map((id: number) => this.genresMap[id]).join(' ')
+            ? game.genres.map((id: number) => this.genresMap[id]).join(', ')
             : 'Genre not available';
 
           // Ottieni la URL della cover, se disponibile
@@ -67,7 +68,7 @@ export class GamesComponent implements OnInit {
 
           // Converti la data di rilascio da timestamp Unix a data leggibile
           const releaseDate = game.release_date
-            ? new Date(game.release_date * 1000).toLocaleDateString()
+            ? new Date(game.first_release_date * 1000).toLocaleDateString()
             : 'N/A';
 
           return {
@@ -76,6 +77,9 @@ export class GamesComponent implements OnInit {
             genreNames: genreNames,
             releaseDate: releaseDate,
           };
+          console.log('Cover URL:', coverUrl);
+          console.log('Genre Names:', genreNames);
+          console.log('Release Date:', releaseDate);
         });
 
         // Ordina i giochi per nome

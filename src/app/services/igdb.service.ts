@@ -2,6 +2,7 @@ import {
   HttpClient,
   HttpErrorResponse,
   HttpHeaders,
+  HttpParams,
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, throwError } from 'rxjs';
@@ -32,6 +33,11 @@ export class IgdbService {
 
   fetchScreenshots(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/screenshots`);
+  }
+
+  searchGames(query: string): Observable<any[]> {
+    const params = new HttpParams().set('search', query);
+    return this.http.get<any[]>(`${this.apiUrl}/games`, { params });
   }
 
   /* postCover(game: any): Observable<any> {

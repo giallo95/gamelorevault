@@ -1,12 +1,62 @@
 <div class="container">
   <div class="jumbotron text-center">
     <h1 class="display-4">Benvenuti a GameLoreVault</h1>
-    <p class="lead">Scopri e condividi informazioni sui tuoi giochi preferiti.</p>
-    <hr class="my-4">
-    <p>Registrati o accedi per iniziare.</p>
-    <div >
-      <a class=" btn btn-primary btn-lg mx-2" href="/register" role="button">Registrati</a>
-      <a class=" btn btn-secondary btn-lg mx-2" href="/login" role="button">Accedi</a>
+    <p class="lead">
+      Scopri e condividi informazioni sui tuoi giochi preferiti.
+    </p>
+    <hr class="my-4" />
+
+    <p *ngIf="!isLoggedIn">Registrati o accedi per iniziare.</p>
+    <div *ngIf="!isLoggedIn">
+      <a
+        class="btn btn-primary btn-lg mx-2"
+        routerLink="/register"
+        role="button"
+        >Registrati</a
+      >
+      <a class="btn btn-secondary btn-lg mx-2" routerLink="/login" role="button"
+        >Accedi</a
+      >
+    </div>
+    <div *ngIf="isLoggedIn" class="container mt-4">
+      <form (ngSubmit)="onSearch()" class="d-flex justify-content-center mb-4">
+        <input
+          type="text"
+          [(ngModel)]="searchQuery"
+          name="searchQuery"
+          placeholder="Search games..."
+          class="form-control me-2 custom-input"
+        />
+        <button type="submit" class="btn btn-outline-success">Search</button>
+      </form>
+      <div *ngIf="searchResults.length > 0">
+        <h2>Search Results for "{{ searchQuery }}"</h2>
+        <div class="row">
+          <div class="col-md-4 mb-3" *ngFor="let game of searchResults">
+            <div class="card h-100">
+              <img
+                [src]="game.coverUrl"
+                class="card-img-top"
+                alt="{{ game.name }} cover"
+              />
+              <div class="card-body">
+                <h5 class="card-title">{{ game.name }}</h5>
+                <p class="card-text">Genres: {{ game.genreNames }}</p>
+                <p class="card-text">Release Date: {{ game.releaseDate }}</p>
+                <a
+                  routerLink="../game-detail"
+                  class="btn btn-primary"
+                  (click)="setGame(game)"
+                  >Details</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="searchResults.length === 0 && searchQuery">
+        <p>No results found for "{{ searchQuery }}"</p>
+      </div>
     </div>
   </div>
 </div>

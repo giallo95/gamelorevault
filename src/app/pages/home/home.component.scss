@@ -1,13 +1,45 @@
 a {
   background-color: #000;
-  color: #00FF00;
-  border: 1px solid #00FF00;
+  color: #00ff00;
+  border: 1px solid #00ff00;
   padding: 10px 20px;
   cursor: pointer;
-  border-radius: 0 ;
+  border-radius: 0;
 }
 
 a:hover {
-  background-color: #00FF00;
+  background-color: #00ff00;
   color: #000;
+}
+
+body {
+  display: block;
+  background-color: #000;
+  color: #00ff00;
+  padding: 20px;
+}
+
+h2,
+a {
+  color: #00ff00;
+}
+
+button {
+  background-color: #000;
+  color: #00ff00;
+  border: 1px solid #00ff00;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 0;
+}
+
+button:hover {
+  background-color: #00ff00;
+  color: #000;
+}
+
+.custom-input {
+  color: #00ff00;
+  border-radius: 0;
+  max-width: 400px;
 }

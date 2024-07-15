@@ -16,15 +16,13 @@ export class LoginComponent {
   constructor(private authService: AuthService) {}
 
   login() {
-    this.authService.login(this.credentials).subscribe(
-      (response) => {
-        console.log('Login successful', response);
-        // Puoi salvare il token nel localStorage o in un altro luogo sicuro
-        localStorage.setItem('token', response);
+    this.authService.login(this.credentials).subscribe({
+      next: (response) => {
+        // Gestisci il successo del login se necessario
       },
-      (error) => {
-        console.error('Error logging in', error);
-      }
-    );
+      error: (err) => {
+        console.error('Login error:', err);
+      },
+    });
   }
 }
