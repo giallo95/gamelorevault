@@ -1,25 +1,29 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
+  private baseUrl = 'http://localhost:8080/api/users';
 
-  private readonly API_URL = 'http://localhost:8080/api';
+  constructor(private http: HttpClient) {}
 
-  constructor(private http: HttpClient) { }
+  register(user: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/register`, user);
+  }
+
+  login(credentials: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/login`, credentials);
+  }
 
   getUserProfile(): Observable<any> {
-    return this.http.get(`${this.API_URL}/profile`).pipe(
-      map((response: any) => {
-        // Mappare la risposta del backend a un oggetto contenente solo username ed email
-        return {
-          username: response.username,
-          email: response.email
-        };
-      })
-    );
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    return this.http.get(`${this.baseUrl}/profile`, { headers });
   }
 }
