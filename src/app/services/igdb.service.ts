@@ -35,9 +35,8 @@ export class IgdbService {
     return this.http.get<any[]>(`${this.apiUrl}/screenshots`);
   }
 
-  searchGames(query: string): Observable<any[]> {
-    const params = new HttpParams().set('search', query);
-    return this.http.get<any[]>(`${this.apiUrl}/games`, { params });
+  searchGames(query: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/search`, { params: { query } });
   }
 
   /* postCover(game: any): Observable<any> {

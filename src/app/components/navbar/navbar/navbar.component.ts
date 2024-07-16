@@ -1,4 +1,10 @@
-import { AfterViewInit, Component, HostListener, Inject } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  HostListener,
+  Inject,
+  Renderer2,
+} from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
@@ -12,7 +18,8 @@ export class NavbarComponent implements AfterViewInit {
 
   constructor(
     @Inject(DOCUMENT) private document: Document,
-    private authService: AuthService
+    private authService: AuthService,
+    private renderer: Renderer2
   ) {}
 
   ngOnInit(): void {
@@ -31,6 +38,7 @@ export class NavbarComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     this.adjustContentMargin();
+    this.setupNavbarToggle();
   }
 
   private adjustContentMargin() {
@@ -51,6 +59,34 @@ export class NavbarComponent implements AfterViewInit {
       if (content) {
         content.style.marginTop = `${navbarHeight}px`;
       }
+    }
+  }
+
+  private setupNavbarToggle() {
+    const toggler = this.document.getElementById('navbarToggler');
+    const navbarCollapse = this.document.getElementById('navbarCollapse');
+
+    console.log('Toggler:', toggler);
+    console.log('Navbar Collapse:', navbarCollapse);
+
+    if (toggler && navbarCollapse) {
+      this.renderer.listen(toggler, 'click', () => {
+        console.log('Toggler clicked');
+        if (navbarCollapse.classList.contains('show')) {
+          this.renderer.removeClass(navbarCollapse, 'show');
+        } else {
+          this.renderer.addClass(navbarCollapse, 'show');
+        }
+      });
+
+      this.renderer.listen('window', 'click', (event: Event) => {
+        if (
+          !navbarCollapse.contains(event.target as Node) &&
+          !toggler.contains(event.target as Node)
+        ) {
+          this.renderer.removeClass(navbarCollapse, 'show');
+        }
+      });
     }
   }
 }

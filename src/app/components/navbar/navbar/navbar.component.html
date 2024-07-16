@@ -1,8 +1,8 @@
 <nav
-  class="navbar navbar-expand-md navbar-dark bg-black fixed-top border-bottom"
+  class="navbar navbar-expand-md navbar-dark bg-black fixed-top border-bottom border-success"
 >
   <div class="container-fluid">
-    <a class="navbar-brand" routerLink="#">Gamelore Vault</a>
+    <a class="navbar-brand" routerLink="#">GameloreVault</a>
     <button
       class="navbar-toggler"
       type="button"
@@ -11,6 +11,7 @@
       aria-controls="navbarCollapse"
       aria-expanded="false"
       aria-label="Toggle navigation"
+      id="navbarToggler"
     >
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -25,12 +26,11 @@
         <li class="nav-item" *ngIf="isLoggedIn">
           <a class="nav-link" routerLink="profile">Profile</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="game-detail">Game-Detail</a>
-        </li>
-        <li class="nav-item" *ngIf="isLoggedIn">
-          <a class="nav-link" (click)="logout()">Logout</a>
-        </li>
+        <div class="d-flex justify-content-end">
+          <li class="nav-item" *ngIf="isLoggedIn">
+            <a class="nav-link" (click)="logout()">Logout</a>
+          </li>
+        </div>
       </ul>
     </div>
   </div>

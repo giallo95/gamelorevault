@@ -7,19 +7,12 @@ import { AuthService } from '../../services/auth.service';
   styleUrl: './profile.component.scss',
 })
 export class ProfileComponent implements OnInit {
-  userProfile: { username: string; email: string } | null = null;
+  user: { username: string; email: string } | null = null;
 
   constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
-    this.authService.getUserProfile().subscribe(
-      (profile) => {
-        this.userProfile = profile;
-      },
-      (error) => {
-        console.error('Error fetching user profile:', error);
-      }
-    );
+    this.user = this.authService.getUserDetails();
   }
 }
 

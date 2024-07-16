@@ -48,7 +48,7 @@ export class GamesComponent implements OnInit {
 
           // Ottieni i nomi dei generi, se disponibili
           const genreNames = game.genres
-            ? game.genres.map((id: number) => this.genresMap[id]).join(', ')
+            ? game.genres.map((id: number) => this.genresMap[id]).join('')
             : 'Genre not available';
 
           // Ottieni la URL della cover, se disponibile

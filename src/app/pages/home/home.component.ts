@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { IgdbService } from '../../services/igdb.service';
 import { Router } from '@angular/router';
+import { GameDetailService } from '../../services/game-detail.service';
 
 @Component({
   selector: 'app-home',
@@ -13,11 +14,14 @@ export class HomeComponent implements OnInit {
   searchQuery: string = '';
   searchResults: any[] = [];
   genresMap: { [key: string]: string } = {};
+  games: any[] = [];
 
   constructor(
     private authService: AuthService,
     private igdbService: IgdbService,
-    private router: Router
+    private router: Router,
+    private gameDetailService: GameDetailService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -27,11 +31,23 @@ export class HomeComponent implements OnInit {
     }
   }
 
+  fetchGames(): void {
+    this.igdbService.fetchGames().subscribe(
+      (data: any[]) => {
+        this.games = data;
+      },
+      (error: any) => {
+        console.error('Error fetching games:', error);
+      }
+    );
+  }
+
   fetchGenres(): void {
     this.igdbService.fetchGenres().subscribe(
       (genres: any[]) => {
         genres.forEach((genre) => {
           this.genresMap[genre.id] = genre.name;
+          console.log(genre.name);
         });
       },
       (error: any) => {
@@ -41,43 +57,35 @@ export class HomeComponent implements OnInit {
   }
 
   onSearch(): void {
-    this.igdbService.searchGames(this.searchQuery).subscribe(
-      (results: any[]) => {
-        this.searchResults = results.map((game) => {
-          const genreNames = game.genres
-            ? game.genres.map((id: number) => this.genresMap[id]).join(', ')
-            : 'Genre not available';
-
-          let coverUrl = game.cover
-            ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${game.cover.image_id}.jpg`
-            : null;
-
-          if (!coverUrl && game.screenshots && game.screenshots.length > 0) {
-            coverUrl = `https://images.igdb.com/igdb/image/upload/t_screenshot_big/${game.screenshots[0].image_id}.jpg`;
-          }
-
-          if (!coverUrl) {
-            coverUrl = 'path/to/default-image.jpg';
-          }
-
-          const releaseDate = game.first_release_date
-            ? new Date(game.first_release_date * 1000).toLocaleDateString()
-            : 'N/A';
-
-          return {
-            ...game,
-            coverUrl: coverUrl,
-            genreNames: genreNames,
-            releaseDate: releaseDate,
-          };
-        });
+    console.log('Searching for:', this.searchQuery);
+    /*this.searchResults = [
+      {
+        id: 1,
+        name: 'Gioco di Test',
+        cover: { image_id: 'test-cover' },
+        genres: [{ name: 'Azione' }, { name: 'Avventura' }],
       },
-      (error: any) => {
-        console.error('Error searching games:', error);
-      }
-    );
+    ];
+    this.searchQuery = 'Gioco di Test';*/
+
+    if (this.searchQuery) {
+      this.igdbService.searchGames(this.searchQuery).subscribe(
+        (data: any) => {
+          this.searchResults = data;
+
+          this.cdr.detectChanges();
+        },
+        (error: any) => {
+          console.error('Error searching games:', error);
+        }
+      );
+    } else {
+      this.searchResults = [];
+      this.fetchGames();
+      this.cdr.detectChanges();
+    }
   }
-  setGame(game: any): void {
-    this.router.navigate(['/game-details', game.id]);
-  }
+  setGame = (game: any) => {
+    this.gameDetailService.globalData = game;
+  };
 }

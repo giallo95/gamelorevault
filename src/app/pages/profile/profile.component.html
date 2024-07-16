@@ -1,10 +1,10 @@
-<div class="container mt-5">
-  <div *ngIf="userProfile; else loading">
+<div class="container mt-5 d-flex justify-content-evenly">
+  <div *ngIf="user; else loading">
     <h2>User Profile</h2>
-    <div class="card">
+    <div class="card bg-black">
       <div class="card-body">
-        <h5 class="card-title">{{ userProfile.username }}</h5>
-        <p class="card-text">{{ userProfile.email }}</p>
+        <p><strong>Username:</strong> {{ user.username }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
       </div>
     </div>
   </div>
